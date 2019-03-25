@@ -123,11 +123,13 @@
       },
       query() {
         this.loading.main = true;
-        cmsApi.page_list(this.page, this.size, this.params).then(res => {
-          this.list = res.queryResult.list;
-          this.total = res.queryResult.total;
-          this.loading.main = false;
-        });
+        setTimeout(() => {
+          cmsApi.page_list(this.page, this.size, this.params).then(res => {
+            this.list = res.queryResult.list;
+            this.total = res.queryResult.total;
+            this.loading.main = false;
+          });
+        }, 200);
       }
     },
     created() {
