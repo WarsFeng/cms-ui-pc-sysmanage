@@ -22,8 +22,14 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="small"
-                   :loading="loading.main" @click="page=1;query()">查询
+                   :loading=loading.main @click="page=1;query()">
+          查询
         </el-button>
+        <router-link class="mui-tab-item" :to="{path: '/cms/page/add'}">
+          <el-button type="primary" icon="el-icon-plus" size="small">
+            新增
+          </el-button>
+        </router-link>
       </el-form-item>
     </el-form>
     <!-- Content table -->
@@ -112,10 +118,10 @@
         this.page = page;
         this.query();
       },
-      siteRemoteMethod(siteName) {
+      siteRemoteMethod(query) {
         this.loading.site = true;
         setTimeout(() => {
-          this.siteList = cmsApi.site_sublist(siteName).then(res => {
+          this.siteList = cmsApi.sub_site_list(query).then(res => {
             this.siteList = res.queryResult.list;
             this.loading.site = false;
           });
