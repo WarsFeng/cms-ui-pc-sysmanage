@@ -73,7 +73,16 @@
       </el-date-picker>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="addSubmit">立即创建</el-button>
+      <el-button type="primary" @click="addSubmit" :loading="loading.submit">立即创建</el-button>
+      <el-button type="" @click="() => {
+        this.$router.push({
+          path: '/cms/page/list',
+          query: {
+             page: this.$route.query.page,
+             siteId: this.$route.query.siteId,
+             pageAlias: this.$route.query.pageAlias,
+          }});}">返回
+      </el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -118,7 +127,8 @@
         },
         loading: {
           site: false,
-          template: false
+          template: false,
+          submit: false
         }
       }
     },
@@ -147,10 +157,35 @@
         }, 200);
       },
       addSubmit() {
+        // Valid
         this.$refs.form.validate((valid) => {
           if (valid) {
-            cmsApi.page_add(this.form);
-          }else {
+            // Confirm
+            this.$confirm('确认要提交吗?', '提示'
+              , {center: true}).then(() => {
+              // Confirm yes
+              this.loading.submit = true;
+              // Add page
+              cmsApi.page_add(this.form).then(res => {
+                if (res.success) { // Add page success
+                  this.$message({
+                    showClose: true,
+                    message: '提交成功!',
+                    type: 'success'
+                  });
+                  this.$refs['form'].resetFields();
+                } else this.$message({ // Add page fail
+                  showClose: true,
+                  message: '提交失败! ' + res.message,
+                  type: 'error'
+                });
+              });
+              this.loading.submit = false;
+              // Confirm cancel
+            }).catch(() => {
+              return false;
+            });
+          } else {
             return false;
           }
         });
@@ -158,6 +193,7 @@
     },
     created() {
       this.siteRemoteMethod();
+      this.loading.site = false;
     }
   }
 </script>

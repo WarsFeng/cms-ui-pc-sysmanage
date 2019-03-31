@@ -4,7 +4,7 @@
     <el-form :inline="true" :model="params" class="demo-form-inline">
       <el-form-item label="站点列表:">
         <el-select
-          v-model="params.siteList"
+          v-model="params.siteId"
           filterable remote clearable
           placeholder="请选择站点"
           :remote-method="siteRemoteMethod"
@@ -25,10 +25,13 @@
                    :loading=loading.main @click="page=1;query()">
           查询
         </el-button>
-        <router-link class="mui-tab-item" :to="{path: '/cms/page/add'}">
-          <el-button type="primary" icon="el-icon-plus" size="small">
-            新增
-          </el-button>
+        <router-link class="mui-tab-item" :to="{
+        path: '/cms/page/add',
+        query:{
+          page: this.page,
+          siteId: this.params.siteId,
+          pageAlias: this.params.pageAlias}}">
+          <el-button type="primary" icon="el-icon-plus" size="small">新增</el-button>
         </router-link>
       </el-form-item>
     </el-form>
@@ -139,8 +142,13 @@
       }
     },
     created() {
+      this.page = Number.parseInt(this.$route.query.page || 1);
+      this.params.siteId = this.$route.query.siteId;
+      this.params.pageAlias = this.$route.query.pageAlias;
       this.query();
+      this.loading.main = false;
       this.siteRemoteMethod();
+      this.loading.site = false;
     }
   }
 </script>
